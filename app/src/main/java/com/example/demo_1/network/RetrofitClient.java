@@ -1,13 +1,14 @@
-package com.example.demo_1.retrofit.utils;
+package com.example.demo_1.network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+// network/RetrofitClient.java
 public class RetrofitClient {
+    private static final String BASE_URL = "http://10.0.2.2:5000/";
     private static Retrofit retrofit;
-    private static final String BASE_URL = "http://13.233.230.234:5000/";
 
-    public static Retrofit getRetrofitInstance() {
+    public static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)

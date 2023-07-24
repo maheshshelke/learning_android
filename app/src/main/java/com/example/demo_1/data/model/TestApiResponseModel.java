@@ -1,15 +1,15 @@
-package com.example.demo_1.models;
+package com.example.demo_1.data.model;
 
-public class ApiResponse {
+public class TestApiResponseModel {
     private boolean status;
     private int statusCode;
     private String message;
     private String data;
 
-    public ApiResponse() {
+    public TestApiResponseModel() {
     }
 
-    public ApiResponse(boolean status, int statusCode, String message, String data) {
+    public TestApiResponseModel(boolean status, int statusCode, String message, String data) {
         this.status = status;
         this.statusCode = statusCode;
         this.message = message;
