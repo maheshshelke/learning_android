@@ -43,7 +43,8 @@ public class MainViewModel extends ViewModel {
 //                        AppDatabase database = AppDatabase.getInstance();
 //                        database.responseDao().insertResponse(responseBody);
                     }
-                } else {
+                } else { // this will not update the testApiResponseModelMutableLiveData
+                    // need to handle is separately
                     // Handle error in case of 404 or 500
                     Log.e(TAG, "in response else part : " + response.code());
                     Log.e(TAG, ": " + response.message());
