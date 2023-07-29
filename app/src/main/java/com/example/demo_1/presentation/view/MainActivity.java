@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.demo_1.R;
@@ -18,30 +19,34 @@ import com.example.demo_1.presentation.viewmodel.MainViewModel;
 public class MainActivity extends AppCompatActivity {
 
     public final String TAG = "TAG";
-    private TextView textView;
-    private Button button;
 
+    // view models
     private MainViewModel mainViewModel;
-
     private AdminLoginViewModel adminLoginViewModel;
 
+    //controls on screen
+    private TextView textViewConnectionTest;
+    private Button buttonTest;
+
+    private EditText editTextMobile;
+    private EditText editTextOtp;
+    private Button buttonLogin;
+    private TextView textViewLoginMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.textView);
-        button = findViewById(R.id.button);
+        textViewConnectionTest = findViewById(R.id.textViewConnectionTest);
+        buttonTest = findViewById(R.id.buttonTest);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        Button button2 = findViewById(R.id.buttonTaskMode);
         adminLoginViewModel = new ViewModelProvider(this).get(AdminLoginViewModel.class);
 
 
-        Button button = findViewById(R.id.button);
         // register click event on button click
-        button.setOnClickListener(new View.OnClickListener() {
+        buttonTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainViewModel.fetchResponse();
@@ -58,13 +63,13 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onChanged: data changed....");
 
                 if(responseModel.isStatus()){
-                    textView.setText(responseModel.getData());
+                    textViewConnectionTest.setText(responseModel.getData());
                     Log.d(TAG, "Status: " + responseModel.isStatus());
                     Log.d(TAG, "Status Code: " + responseModel.getStatusCode());
                     Log.d(TAG, "Message: " + responseModel.getMessage());
                     Log.d(TAG, "Data: " + responseModel.getData());
                 } else { // business error
-                    textView.setText(responseModel.getMessage());
+                    textViewConnectionTest.setText(responseModel.getMessage());
                     Log.d(TAG, "Status: " + responseModel.isStatus());
                     Log.d(TAG, "Status Code: " + responseModel.getStatusCode());
                     Log.d(TAG, "Message: " + responseModel.getMessage());
@@ -83,13 +88,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        button2.setOnClickListener(new View.OnClickListener() {
+        buttonLogin = findViewById(R.id.buttonLogin);
+        editTextMobile = findViewById(R.id.editTextMobile);
+        editTextOtp = findViewById(R.id.editTextOTP);
+        textViewLoginMessage = findViewById(R.id.textViewLoginMessage);
+
+        buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: button2 is clicked");
-                adminLoginViewModel.loginAdmin("0987654321", "123456");
+                Log.d(TAG, "onClick: login button  is clicked");
+                adminLoginViewModel.loginAdmin(editTextMobile.getText().toString(), editTextOtp.getText().toString());
             }
         });
+
 
         // subscribe to success response of admin login api
         adminLoginViewModel.getAdminLoginResponseLiveData().observe(this, new Observer<TestApiResponseModel>() {
@@ -101,13 +112,13 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "admin login response received....");
 
                 if(responseModel.isStatus()){ // login successful
-                    textView.setText(responseModel.getData());
+                    textViewLoginMessage.setText(responseModel.getData());
                     Log.d(TAG, "Status: " + responseModel.isStatus());
                     Log.d(TAG, "Status Code: " + responseModel.getStatusCode());
                     Log.d(TAG, "Message: " + responseModel.getMessage());
                     Log.d(TAG, "Data: " + responseModel.getData());
                 } else { // login failed
-                    textView.setText(responseModel.getMessage());
+                    textViewLoginMessage.setText(responseModel.getMessage());
                     Log.d(TAG, "Status: " + responseModel.isStatus());
                     Log.d(TAG, "Status Code: " + responseModel.getStatusCode());
                     Log.d(TAG, "Message: " + responseModel.getMessage());
@@ -116,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
 }
