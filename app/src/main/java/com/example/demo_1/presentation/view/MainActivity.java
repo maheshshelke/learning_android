@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: button2 is clicked");
-                adminLoginViewModel.loginAdmin("0987654321", "nothing");
+                adminLoginViewModel.loginAdmin("0987654321", "123456");
             }
         });
 

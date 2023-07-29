@@ -12,6 +12,6 @@ public interface ApiService {
     @GET("api/v1/")
     Call<TestApiResponseModel> getTestApiResponse();
 
-    @POST("api/v1/admin/login")
+    @POST("api/v1/user/login")
     Call<TestApiResponseModel> loginAdmin(@Body AdminLoginRequestModel loginRequest);
 }
