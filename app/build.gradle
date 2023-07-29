@@ -46,5 +46,8 @@ dependencies {
     implementation 'androidx.room:room-common:2.4.2'
     annotationProcessor 'androidx.room:room-compiler:2.4.2'
 
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
 
 }

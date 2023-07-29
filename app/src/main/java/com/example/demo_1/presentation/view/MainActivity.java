@@ -13,7 +13,8 @@ import android.widget.TextView;
 
 import com.example.demo_1.R;
 import com.example.demo_1.data.model.TestApiResponseModel;
-import com.example.demo_1.presentation.viewmodel.AdminLoginViewModel;
+import com.example.demo_1.data.model.User;
+import com.example.demo_1.presentation.viewmodel.UserLoginViewModel;
 import com.example.demo_1.presentation.viewmodel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     // view models
     private MainViewModel mainViewModel;
-    private AdminLoginViewModel adminLoginViewModel;
+    private UserLoginViewModel userLoginViewModel;
 
     //controls on screen
     private TextView textViewConnectionTest;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         buttonTest = findViewById(R.id.buttonTest);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        adminLoginViewModel = new ViewModelProvider(this).get(AdminLoginViewModel.class);
+        userLoginViewModel = new ViewModelProvider(this).get(UserLoginViewModel.class);
 
 
         // register click event on button click
@@ -97,13 +98,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: login button  is clicked");
-                adminLoginViewModel.loginAdmin(editTextMobile.getText().toString(), editTextOtp.getText().toString());
+                userLoginViewModel.loginAdmin(editTextMobile.getText().toString(),
+                        editTextOtp.getText().toString());
             }
         });
 
 
         // subscribe to success response of admin login api
-        adminLoginViewModel.getAdminLoginResponseLiveData().observe(this, new Observer<TestApiResponseModel>() {
+        userLoginViewModel.getLoginResponseLiveData().observe(this, new Observer<TestApiResponseModel>() {
             @Override
             public void onChanged(TestApiResponseModel responseModel) {
                 // Update UI with the response data from the second button click (login)
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "admin login response received....");
 
                 if(responseModel.isStatus()){ // login successful
-                    textViewLoginMessage.setText(responseModel.getData());
+//                    textViewLoginMessage.setText(responseModel.getData());
                     Log.d(TAG, "Status: " + responseModel.isStatus());
                     Log.d(TAG, "Status Code: " + responseModel.getStatusCode());
                     Log.d(TAG, "Message: " + responseModel.getMessage());
@@ -126,6 +128,16 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
+        });
+
+        userLoginViewModel.getLoginUserLiveData().observe(this, new Observer<User>(){
+
+            @Override
+            public void onChanged(User user) {
+                Log.d(TAG, "admin login user received....");
+                textViewLoginMessage.setText(user.getFirstName() + " " + user.getLastName() +" : Role: "+ user.getRole());
+            }
+
         });
 
     }
