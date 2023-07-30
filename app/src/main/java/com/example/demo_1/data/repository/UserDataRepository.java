@@ -7,7 +7,9 @@ import com.example.demo_1.data.model.AdminLoginRequestModel;
 import com.example.demo_1.data.model.TestApiResponseModel;
 import com.example.demo_1.data.model.User;
 import com.example.demo_1.network.ApiService;
+import com.example.demo_1.network.RetrofitAuthClient;
 import com.example.demo_1.network.RetrofitClient;
+import com.example.demo_1.utils.Constants;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -28,12 +30,26 @@ public class UserDataRepository {
         return apiService.loginAdmin(adminLoginRequestModel);
     }
 
+    public Call<TestApiResponseModel> performAdminOperation(){
+        return apiService.performAdminOperation();
+    }
+
+    public Call<TestApiResponseModel> performFielderOperation(){
+        return apiService.performFielderOperation();
+    }
+
+
+
     public User getUserFromJwtToken(String jwtToken){
         User user = null;
         try {
+            // set token in retrofit auth client for all the subsequent requests
+            apiService = RetrofitAuthClient.getRetrofitAuthClient(jwtToken).create(ApiService.class);
+
+
             // Parse the JWT token
             Jws<Claims> claimsJws = Jwts.parser()
-                    .setSigningKey("unVvaRg2q7XGZPzjKvKeNem9SgPd7".getBytes()) // Use your SECRET_KEY here
+                    .setSigningKey(Constants.JWT_SECRET.getBytes()) // Use your SECRET_KEY here
 //                    .build()
                     .parseClaimsJws(jwtToken);
 

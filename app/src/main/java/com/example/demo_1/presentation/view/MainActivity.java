@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonLogin;
     private TextView textViewLoginMessage;
 
+    private Button buttonAdminOperation;
+    private Button buttonUserOperation;
+    private TextView textViewUserOperation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +48,15 @@ public class MainActivity extends AppCompatActivity {
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         userLoginViewModel = new ViewModelProvider(this).get(UserLoginViewModel.class);
+
+        buttonAdminOperation = findViewById(R.id.buttonAdminOperation);
+        buttonUserOperation = findViewById(R.id.buttonUserOperation);
+        textViewUserOperation = findViewById(R.id.textViewUserOperation);
+
+        // hide the user operations button and text view
+        buttonAdminOperation.setVisibility(View.INVISIBLE);
+        buttonUserOperation.setVisibility(View.INVISIBLE);
+        textViewUserOperation.setVisibility(View.INVISIBLE);
 
 
         // register click event on button click
@@ -135,11 +148,58 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(User user) {
                 Log.d(TAG, "admin login user received....");
-                textViewLoginMessage.setText(user.getFirstName() + " " + user.getLastName() +" : Role: "+ user.getRole());
+                if(user != null) {
+                    textViewLoginMessage.setText(user.getFirstName() + " " + user.getLastName() + " : Role: " + user.getRole());
+                    if (user.getRole().equals("admin")) {
+                        buttonAdminOperation.setVisibility(View.VISIBLE);
+                        textViewUserOperation.setVisibility(View.VISIBLE);
+                    } else {
+                        buttonUserOperation.setVisibility(View.VISIBLE);
+                        textViewUserOperation.setVisibility(View.VISIBLE);
+                    }
+                }
             }
 
         });
 
-    }
+        buttonAdminOperation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: admin operation button  is clicked");
+                userLoginViewModel.performAdminOperation();
+            }
+        });
+
+        userLoginViewModel.getAdminOperationResponseLiveData().observe(this, new Observer<TestApiResponseModel>() {
+            @Override
+            public void onChanged(TestApiResponseModel testApiResponseModel) {
+
+                Log.d(TAG, "admin operation data received....");
+                Log.d(TAG, "onChanged: " + testApiResponseModel);
+                textViewUserOperation.setText(testApiResponseModel.getMessage());
+            }
+        });
+
+
+        buttonUserOperation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: fielder operation button is clicked");
+                userLoginViewModel.performFielderOperation();
+            }
+        });
+
+        userLoginViewModel.getFielderOperationResponseLiveData().observe(this, new Observer<TestApiResponseModel>() {
+            @Override
+            public void onChanged(TestApiResponseModel testApiResponseModel) {
+
+                Log.d(TAG, "fielder operation data received....");
+                Log.d(TAG, "onChanged: " + testApiResponseModel);
+                textViewUserOperation.setText(testApiResponseModel.getMessage());
+            }
+        });
+
+
+    } //activity onCreate closing bracket
 
 }

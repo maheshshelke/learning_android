@@ -20,6 +20,8 @@ public class UserLoginViewModel extends ViewModel {
     private String TAG = "TAG";
     private UserDataRepository userDataRepository;
     private MutableLiveData<TestApiResponseModel> loginResponseLiveData;
+    private MutableLiveData<TestApiResponseModel> adminOperationResponseLiveData;
+    private MutableLiveData<TestApiResponseModel> fielderOperationResponseLiveData;
 
     private MutableLiveData<User> loginUserLiveData;
 
@@ -27,6 +29,8 @@ public class UserLoginViewModel extends ViewModel {
         userDataRepository = new UserDataRepository();
         loginResponseLiveData = new MutableLiveData<>();
         loginUserLiveData = new MutableLiveData<>();
+        adminOperationResponseLiveData = new MutableLiveData<>();
+        fielderOperationResponseLiveData = new MutableLiveData<>();
     }
 
     public void loginAdmin(String mobile, String password) {
@@ -43,6 +47,7 @@ public class UserLoginViewModel extends ViewModel {
                     if (responseBody != null) {
                         Log.d(TAG, "onResponse: setting the data of post request");
                         loginResponseLiveData.setValue(responseBody);
+                        loginUserLiveData.setValue(null);
                         loginUserLiveData.setValue(userDataRepository.getUserFromJwtToken(responseBody.getData()));
                     }
                 } else {
@@ -65,5 +70,55 @@ public class UserLoginViewModel extends ViewModel {
 
     public MutableLiveData<User> getLoginUserLiveData() {
         return loginUserLiveData;
+    }
+
+    public void performAdminOperation() {
+        userDataRepository.performAdminOperation().enqueue(new Callback<TestApiResponseModel>() {
+            @Override
+            public void onResponse(Call<TestApiResponseModel> call, Response<TestApiResponseModel> response) {
+                Log.d(TAG, "performAdminOperation: onResponse");
+                if(response.isSuccessful()){
+                    adminOperationResponseLiveData.setValue(response.body());
+                } else {
+                    // Handle error
+                    Log.e(TAG, "performAdminOperation: onResponse: "+response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TestApiResponseModel> call, Throwable t) {
+                // Handle failure
+                Log.e(TAG, "performAdminOperation : onResponse: "+ t.getMessage());
+            }
+        });
+    }
+    public LiveData<TestApiResponseModel> getAdminOperationResponseLiveData() {
+        return adminOperationResponseLiveData;
+    }
+
+
+    public void performFielderOperation(){
+        userDataRepository.performFielderOperation().enqueue(new Callback<TestApiResponseModel>() {
+            @Override
+            public void onResponse(Call<TestApiResponseModel> call, Response<TestApiResponseModel> response) {
+                Log.d(TAG, "performFielderOperation: onResponse");
+                if(response.isSuccessful()){
+                    fielderOperationResponseLiveData.setValue(response.body());
+                } else {
+                    // Handle error
+                    Log.e(TAG, "performFielderOperation: onResponse: "+response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TestApiResponseModel> call, Throwable t) {
+                // Handle failure
+                Log.e(TAG, "performFielderOperation : onResponse: "+ t.getMessage());
+            }
+        });
+    }
+
+    public LiveData<TestApiResponseModel> getFielderOperationResponseLiveData(){
+        return fielderOperationResponseLiveData;
     }
 }
